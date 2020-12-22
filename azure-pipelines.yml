@@ -24,13 +24,9 @@ jobs:
     vmImage: 'macOS-10.15'
   continueOnError: true
   steps:
-  - script: |
-      brew install wireguard-go wireguard-tools
-    displayName: 'Install wireguard-go'
-  - script: ./mac.docker.sh
-    displayName: 'Install Docker'
   - template: ci/azure-build.yml
     parameters:
+      runLibraryTests: 'false'
       runBinaryTests: 'false'
   - script: |
       export PATH=$PATH:$HOME/.cargo/bin
@@ -65,15 +61,17 @@ jobs:
   pool:
     name: default
     demands: agent.name -equals aarch64
+    vmImage: 'ubuntu-20.04'
   continueOnError: true
   steps:
   - template: ci/azure-build.yml
 
 - job: Linux_armv7
   displayName: 'Linux armv7'
-  pool: 
+  pool:
     name: default
     demands: agent.name -equals armv7
+    vmImage: 'ubuntu-20.04'
   continueOnError: true
   steps:
   - template: ci/azure-build.yml

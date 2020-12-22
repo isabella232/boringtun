@@ -1,5 +1,6 @@
 
 parameters:
+  runLibraryTests: 'true'
   runBinaryTests: 'true'
 
 steps:
@@ -11,14 +12,15 @@ steps:
       export PATH=$PATH:$HOME/.cargo/bin
       cargo build --lib
     displayName: 'Build library'
-  - script: |
-      export PATH=$PATH:$HOME/.cargo/bin
-      cargo test --lib -- --test-threads=1
-    displayName: 'Test library'
-  - script: |
-      export PATH=$PATH:$HOME/.cargo/bin
-      cargo test --lib -- --ignored --test-threads=1
-    displayName: 'Library integration tests'
+  - ${{ if eq(parameters.runLibraryTests, 'true') }}:
+    - script: |
+        export PATH=$PATH:$HOME/.cargo/bin
+        cargo test --lib -- --test-threads=1
+      displayName: 'Test library'
+    - script: |
+        export PATH=$PATH:$HOME/.cargo/bin
+        cargo test --lib -- --ignored --test-threads=1
+      displayName: 'Library integration tests'
   - script: |
       export PATH=$PATH:$HOME/.cargo/bin
       cargo build --bin boringtun

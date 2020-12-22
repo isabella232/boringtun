@@ -4,7 +4,7 @@
 
 # osx agent doesn't have docker pre-installed, so we need to do it manually
 retries=0
-brew cask install docker
+brew install --cask bren2010/docker/docker
 
 # manually setup docker, as versions after 2.0.0.3-ce-mac81,31259 cannot be installed without mouse-fu :facepalm:
 # thanks to https://github.com/docker/for-mac/issues/2359#issuecomment-607154849
@@ -30,8 +30,12 @@ while ! docker info 2>/dev/null ; do
         #open -g -a Docker.app || exit
         open -g /Applications/Docker.app || exit
     fi
-    if [ $retries -gt 30 ]; then
+    if [ $retries -gt 300 ]; then
         >&2 echo 'Failed to run docker'
+
+        /usr/bin/log show --debug --info --style syslog --last 1d --predicate 'process matches ".*(ocker|vpnkit).*"
+            || (process in {"taskgated-helper", "launchservicesd", "kernel"} && eventMessage contains[c] "docker")'
+
         exit 1
     fi;
 
